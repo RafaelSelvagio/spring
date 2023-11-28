@@ -25,20 +25,20 @@ public class CepController {
     }
     
     @GetMapping("/cep/{campo}/{cep}")
-    public String consultarLogradouro(@PathVariable String campo, @PathVariable String cep) {
+    public String consultarCampo(@PathVariable String campo, @PathVariable String cep) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://viacep.com.br/ws/" + cep + "/json/";
 
         try {
             String resposta = restTemplate.getForObject(url, String.class);
-            return extrairLogradouro(resposta, campo);
+            return extrairCampo(resposta, campo);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Erro ao consultar o logradouro do CEP: " + e.getMessage();
+            return "Erro ao consultar o campo " + campo + " do CEP: " + e.getMessage();
         }
     }
     
-    private String extrairLogradouro(String resposta, String campo) {
+    private String extrairCampo(String resposta, String campo) {
         try {
         	// Cria um objeto ObjectMapper para mapear o JSON
             ObjectMapper objectMapper = new ObjectMapper();
@@ -47,10 +47,11 @@ public class CepController {
             JsonNode rootNode = objectMapper.readTree(resposta);
 
             // Obtém o campo 'logradouro'
-            String logradouro = rootNode.get(campo).asText();
+            String conteudo_campo = rootNode.get(campo).asText();
             
             // Retorno
-            return campo + ": " + logradouro;
+            //return campo + ": " + conteudo_campo; // Retorno Original: Ex: Logradouro: Rua Candido Padim
+            return conteudo_campo; // Retorno, Ex: Rua Candido Padim
         } catch (Exception e) {
             e.printStackTrace();
             return "Erro ao o CEP: " + e.getMessage();
